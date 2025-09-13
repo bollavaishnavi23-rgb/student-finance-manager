@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Finance Manager</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      width: 850px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    h2, h3 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #6c63ff, #3f3dff);
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    th {
+      background: #6c63ff;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background: #f4f6ff;
+    }
+    .total-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f0f4ff;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #2c3e50;
+      text-align: center;
+    }
+    .student-details {
+      background: #f9f9ff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💰 Student Finance Manager</h2>
+
+    <!-- Fee Structure -->
+    <h3>📑 Fee Structure</h3>
+    <table>
+      <tr><th>Category</th><th>Amount (₹)</th></tr>
+      <tr><td>Tuition Fee</td><td>50,000</td></tr>
+      <tr><td>Bus Fee</td><td>8,000</td></tr>
+      <tr><td>Hostel Fee</td><td>40,000</td></tr>
+      <tr><td>Food</td><td>15,000</td></tr>
+      <tr><td>Travel</td><td>5,000</td></tr>
+      <tr><td>Books</td><td>7,000</td></tr>
+      <tr><td>Uniform Fee</td><td>3,000</td></tr>
+    </table>
+
+    <!-- Student Details -->
+    <div>
+      <label>Student Name:</label>
+      <input type="text" id="studentName" placeholder="Enter student name">
+
+      <label>Roll No:</label>
+      <input type="text" id="rollNo" placeholder="Enter roll number">
+
+      <label>Branch:</label>
+      <input type="text" id="branch" placeholder="Enter branch (e.g., CSE)">
+
+      <label>Year:</label>
+      <select id="year">
+        <option>1st Year</option>
+        <option>2nd Year</option>
+        <option>3rd Year</option>
+        <option>4th Year</option>
+      </select>
+
+      <button onclick="saveStudent()">✔ Save Student Details</button>
+    </div>
+
+    <!-- Saved Student Info -->
+    <div class="student-details" id="studentDetails" style="display:none;">
+      <h3>👨‍🎓 Student Information</h3>
+      <p><b>Name:</b> <span id="dispName"></span></p>
+      <p><b>Roll No:</b> <span id="dispRoll"></span></p>
+      <p><b>Branch:</b> <span id="dispBranch"></span></p>
+      <p><b>Year:</b> <span id="dispYear"></span></p>
+    </div>
+
+    <!-- Expense Entry -->
+    <h3>Add Expense</h3>
+    <label>Amount:</label>
+    <input type="number" id="amount" placeholder="Enter amount">
+
+    <label>Category:</label>
+    <select id="category">
+      <option>Food</option>
+      <option>Travel</option>
+      <option>Books</option>
+      <option>Others</option>
+      <option>Bus Fee</option>
+      <option>Uniform Fee</option>
+      <option>Tuition Fee</option>
+      <option>Hostel Fee</option>
+    </select>
+
+    <button onclick="addExpense()">➕ Add Expense</button>
+
+    <h3>Expense List</h3>
+    <table id="expenseTable">
+      <tr>
+        <th>Name</th>
+        <th>Roll No</th>
+        <th>Branch</th>
+        <th>Year</th>
+        <th>Category</th>
+        <th>Amount</th>
+      </tr>
+    </table>
+
+    <div class="total-box">
+      Total Spent: ₹<span id="total">0</span>
+    </div>
+  </div>
+
+  <script>
+    let total = 0;
+    let studentSaved = false;
+    let studentInfo = {};
+
+    function saveStudent() {
+      let name = document.getElementById("studentName").value;
+      let roll = document.getElementById("rollNo").value;
+      let branch = document.getElementById("branch").value;
+      let year = document.getElementById("year").value;
+
+      if (name === "" || roll === "" || branch === "") {
+        alert("Please fill all student details!");
+        return;
+      }
+
+      studentInfo = { name, roll, branch, year };
+      studentSaved = true;
+
+      // Display student info
+      document.getElementById("dispName").innerText = name;
+      document.getElementById("dispRoll").innerText = roll;
+      document.getElementById("dispBranch").innerText = branch;
+      document.getElementById("dispYear").innerText = year;
+      document.getElementById("studentDetails").style.display = "block";
+
+      // Clear input fields
+      document.getElementById("studentName").value = "";
+      document.getElementById("rollNo").value = "";
+      document.getElementById("branch").value = "";
+      document.getElementById("year").selectedIndex = 0;
+
+      alert("Student details saved!");
+    }
+
+    function addExpense() {
+      if (!studentSaved) {
+        alert("Please save student details first!");
+        return;
+      }
+
+      let amount = parseInt(document.getElementById("amount").value);
+      let category = document.getElementById("category").value;
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid amount");
+        return;
+      }
+
+      let table = document.getElementById("expenseTable");
+      let row = table.insertRow();
+      row.insertCell(0).innerText = studentInfo.name;
+      row.insertCell(1).innerText = studentInfo.roll;
+      row.insertCell(2).innerText = studentInfo.branch;
+      row.insertCell(3).innerText = studentInfo.year;
+      row.insertCell(4).innerText = category;
+      row.insertCell(5).innerText = "₹" + amount;
+
+      total += amount;
+      document.getElementById("total").innerText = total;
+
+      document.getElementById("amount").value = "";
+    }
+  </script>
+</body>
+</html>
